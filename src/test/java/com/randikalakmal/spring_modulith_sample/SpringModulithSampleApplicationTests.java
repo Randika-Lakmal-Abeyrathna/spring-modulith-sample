@@ -10,7 +10,7 @@ import org.springframework.modulith.docs.Documenter;
 class SpringModulithSampleApplicationTests {
 
 	@Test
-	void contextLoads() {
+	void validateModularity() {
 
 		ApplicationModules module = ApplicationModules.of(SpringModulithSampleApplication.class)
 				.verify();

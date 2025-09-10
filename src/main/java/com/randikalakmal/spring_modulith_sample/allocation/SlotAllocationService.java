@@ -1,6 +1,7 @@
 package com.randikalakmal.spring_modulith_sample.allocation;
 
 import com.randikalakmal.spring_modulith_sample.event.VehicleEnteredEvent;
+import com.randikalakmal.spring_modulith_sample.event.VehicleExitEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,22 @@ public class SlotAllocationService {
         slotRepository.save(slot);
 
         System.out.println("Allocated slot " + slot.getSlotCode() + " to vehicle " + event.vehicleNumber() + " at " + event.entryTime());
+    }
+
+    @EventListener(VehicleExitEvent.class)
+    public void handleVehicleExit(VehicleExitEvent event){
+
+        slotRepository.findByVehicleNumber(event.vehicleNumber())
+                .ifPresentOrElse(slot -> {
+                    slot.setAvailable(true);
+                    slot.setVehicleNumber(null);
+                    slotRepository.save(slot);
+                    System.out.println("Deallocated slot " + slot.getSlotCode() + " from vehicle " + event.vehicleNumber() + " at " + event.exitTime());
+                }, () ->{
+                    throw new RuntimeException("Slot not found");
+
+                });
+
     }
 
 
